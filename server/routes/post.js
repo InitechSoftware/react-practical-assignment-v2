@@ -12,6 +12,7 @@ router.get('/:id', postCtrl.getPost);
 router.get('/search/:filter', postCtrl.searchPosts);
 router.post('', postCtrl.addPost);
 router.get('', postCtrl.getPosts);
+router.get('/page/:pageNumber/:userName1/:userName2', postCtrl.getPostsPage);
 router.get('/page/:pageNumber', postCtrl.getPostsPage);
 router.put('/:id', postCtrl.editPost);
 router.delete('/:id', postCtrl.deletePost);

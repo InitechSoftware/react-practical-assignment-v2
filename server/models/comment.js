@@ -73,7 +73,6 @@ exports.deleteCommentDB = async (id) => {
 };
 
 exports.createComment = (text, postId, username) => {
-    console.log('>>>', Date.now())
     return {
         text, postId, username,
         likes: [], dislikes: [], date: +Date.now().toString()

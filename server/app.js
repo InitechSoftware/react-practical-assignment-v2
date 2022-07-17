@@ -1,13 +1,18 @@
 require('dotenv').config()
 const express = require('express');
 const bodyParser = require('body-parser');
+const http = require('http');
+const cors = require('cors');
 
 const postRoutes = require('./routes/post');
 const commentRoutes = require('./routes/comment');
+const chatRoutes = require('./routes/chats');
 
 const app = express();
+const server = http.createServer(app);
 const PORT = 8080;
 
+app.use(cors());
 app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
 
@@ -21,7 +26,9 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/users', chatRoutes)
 app.use('/post', postRoutes);
+app.use('/message', postRoutes);
 app.use('/comment', commentRoutes);
 app.use('/live', (req, res) => res.status(200).send({success: true, result: 'SERVER LIVES'}));
 
@@ -39,8 +46,9 @@ const startApp = async (port=PORT) => {
   app.listen(port, async () => {
     console.log(`Example app listening at http://localhost:${port}`);
     // await runDbTests();
-  })
-  
+  });
+
+  return server;
 };
 
 const stopApp = async () => {

@@ -18,213 +18,163 @@ Here is endpoints description:
 
 MAIN_URL = http://localhost:8080/
 
-CREATE POST:
-url: MAIN_URL + 'post/'
-method: post
-body: {
-    title: <string>,
-    username: <string>
-}
+GET LIST OF USERS
+url: MAIN_URL + 'users' 
+method: GET 
 response: {
-    id: <number>,
-    title: <string>,
-    username: <string>
-    likes: <Array<string>> //usernames
-    dislikes: <Array<string>> //usernames
-    imageSrc: <string> //path
-    date: <number>,
-    comments: <Array<Comment>>
+    "success": true,
+    "result": array of strings // usernames
 }
 
-UPDATE POST
-url: MAIN_URL + 'post/{id}'
-method: put
-body: {
-    title?: <string>,
-    likes?: Array<<string>>,
-    dislikes?: Array<<strings>>
-}
+CREATE MESSAGE
+url: MAIN_URL + 'message' 
+method: POST 
+body: { 
+	title: string, // message text
+	username: string, // message creater/sender username !!! should be one of users from GET LIST OF USERS request
+	to: string, // message reciever username !!! should be one of users from GET LIST OF USERS request
+} 
 response: {
-    id: <number>,
-    title: <string>,
-    username: <string>
-    likes: <Array<string>>
-    dislikes: <Array<string>>
-    date: <number>,
-    comments: <Array<Comment>>
-}
-
-FILTER/SEARCH POSTS BY KEYWORD
-url MAIN_URL + 'post/search/${keyWord}'
-method: get
-response: [
-    {
-        id: <number>,
-        title: <string>,
-        username: <string>
-        likes: <Array<string>> //usernames
-        dislikes: <Array<string>> //usernames
-        imageSrc: <string> //path
-        date: <number>,
-        comments: <Array<Comment>>
+    "success": true,
+    "result": {
+        "id": number,
+        "title": string,
+        "username": string,
+        "to": string,
+        "likes": array of usernames,
+        "dislikes": array of usernames,
+        "date": timestamp,
     }
-    ...
-]
+}
 
-GET POSTS BY PAGES (9 posts per page)
-url MAIN_URL + 'post/page/${pageNumber}' // pageNumber > 0
-response: [
-    {
-        id: <number>,
-        title: <string>,
-        username: <string>
-        likes: <Array<string>> //usernames
-        dislikes: <Array<string>> //usernames
-        imageSrc: <string> //path
-        date: <number>,
-        comments: <Array<Comment>>
+EDIT MESSAGE
+url: MAIN_URL + 'message/:id'
+method: PUT
+body: { 
+	title: string, // message text OPTIONAL
+	dislikes: array of usernames OPTIONAL
+	likes: array of usernames OPTIONAL
+}
+response: {
+    "success": true,
+    "result": {
+        "id": number,
+        "title": string,
+        "username": string,
+        "to": string,
+        "likes": array of usernames,
+        "dislikes": array of usernames,
+        "date": timestamp,
     }
-    ...
-]
-+ response conains additional information: totalPages, total and page
-
-DELETE POST
-url: MAIN_URL + 'post/{id}'
-method: delete
-response: {
-    id: <number>,
-    title: <string>,
-    username: <string>
-    likes: <Array<string>> //usernames
-    dislikes: <Array<string>> //usernames
-    imageSrc: <string> //path
-    date: <number>,
-    comments: <Array<Comment>>
+}
 }
 
-UPLOAD POST PICTURE
-url: MAIN_URL + 'post/{id}/picture'
-method: post
-body: FormData // should contain file like this formData.append("picture", file);
+GET USER'S MESSAGES (messages beatween two users / chat messages)
+url: MAIN_URL + 'message/page/:pageNumber/:userName1/:userName2'
+method GET
 response: {
-    id: <number>,
-    title: <string>,
-    username: <string>
-    likes: <Array<string>> //usernames
-    dislikes: <Array<string>> //usernames
-    imageSrc: <string> //path
-    date: <number>,
-    comments: <Array<Comment>>
+    "success": boolean,
+    "result": [
+        {
+            "id": number,
+            "title": string,
+            "username": string,
+            "to": string,
+            "likes": array,
+            "dislikes": array,
+            "date": timestamp,
+            "comments": array,
+        },
+        ...
+    ],
+    "totalPages": number,
+    "total": number,
+    "page": number,
 }
+
+DELETE MESSAGE
+url: MAIN_URL + 'message/:id'
+method DELETE
+response : {
+    "success": true,
+    "result": {
+        "id": number,
+        "title": string,
+        "username": string,
+        "to": string,
+        "likes": array of usernames,
+        "dislikes": array of usernames,
+        "date": timestamp,
+    }
+}
+
+GET MESSAGE
+url: MAIN_URL + 'message/:id'
+method GET
 
 CREATE COMMENT
 url: MAIN_URL + 'comment'
-method: post
+method: POST
 body: {
-    text: <string>,
-    postId: <number>,
-    username: <string>,
+    "text": string, // commen's text
+    "username": string, // !!! should be one of users from GET LIST OF USERS request
+    "postId": number // message id
 }
 response: {
-    id: <number>,
-    text: <string>,
-    postId: <number>,
-    username: <string>,
-    likes: <Array<strings>>,
-    dislikes: <Array<strings>>,
-    date: <number>
+    "success": boolean,
+    "result": {
+        "id": number,
+        "text": string,
+        "username": string,
+        "postId": number,
+        "likes": array,
+        "dislikes": array,
+        "date": timestamp,
+    }
 }
 
-UPDATE COMMENT
-url: MAIN_URL + 'comment/{id}'
-method: put
+EDIT COMMENT
+url: MAIN_URL + 'comment'
+method: PUT
 body: {
-    text: <string>,
-    likes: <Array<strings>>,
-    dislikes: <Array<strings>>,
+	text: string OPTIONAL
+	dislikes: array of usernames OPTIONAL
+	likes: array of usernames OPTIONAL
 }
 response: {
-    id: <number>,
-    text: <string>,
-    postId: <number>,
-    username: <string>,
-    likes: <Array<strings>>,
-    dislikes: <Array<strings>>,
-    date: <number>
+    "success": boolean,
+    "result": {
+        "id": number,
+        "text": string,
+        "username": string,
+        "postId": number,
+        "likes": array,
+        "dislikes": array,
+        "date": timestamp,
+    }
 }
 
 DELETE COMMENT
-url: MAIN_URL + 'comment/{id}'
-method: delete
+url: MAIN_URL + 'comment'
+method: DELETE
 response: {
-    id: <number>,
-    text: <string>,
-    postId: <number>,
-    username: <string>,
-    likes: <Array<strings>>,
-    dislikes: <Array<strings>>,
-    date: <number>
-}
-
-
-=============== i hope next endpoints will shouldn't be used, but i'll left it here, just in case ====================
-
-GET ALL POSTS
-url: MAIN_URL + 'post'
-method: get
-response: [
-    {
-        id: <number>,
-        title: <string>,
-        username: <string>
-        likes: <Array<string>> //usernames
-        dislikes: <Array<string>> //usernames
-        imageSrc: <string> //path
-        date: <number>,
-        comments: <Array<Comment>>
+    "success": boolean,
+    "result": {
+        "id": number,
+        "text": string,
+        "username": string,
+        "postId": number,
+        "likes": array,
+        "dislikes": array,
+        "date": timestamp,
     }
-    ...
-]
-
-GET POST
-url: MAIN_URL + 'post/{id}'
-method: get
-response: {
-    id: <number>,
-    title: <string>,
-    username: <string>
-    likes: <Array<string>> //usernames
-    dislikes: <Array<string>> //usernames
-    imageSrc: <string> //path
-    date: <number>,
-    comments: <Array<Comment>>
 }
 
 GET COMMENT
-url: MAIN_URL + 'comment/{id}'
-method: get
-response: {
-    id: <number>,
-    text: <string>,
-    postId: <number>,
-    username: <string>,
-    likes: <Array<strings>>,
-    dislikes: <Array<strings>>,
-    date: <number>
-}
+url: MAIN_URL + 'comment/:id'
+method: GET
 
-GET COMMENTS
-url: MAIN_URL + 'comment'
-method: get
-response: [
-    {
-        id: <number>,
-        text: <string>,
-        postId: <number>,
-        username: <string>,
-        likes: <Array<strings>>,
-        dislikes: <Array<strings>>,
-        date: <number>
-    },
-    ...
-]
+SOCKET
+url: "http://localhost:8081"
+event: "message"
+transports: ["websocket", "polling"]

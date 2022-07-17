@@ -11,6 +11,10 @@ exports.postSchema = {
         validator: (val) => typeof val === 'string',
         required: true,
     },
+    to: {
+        validator: (val) => typeof val === 'string',
+        required: false,
+    },
     likes: {
         validator: (val) => Array.isArray(val),
         required: false,
@@ -68,7 +72,7 @@ exports.editPostDB = async (id, updPost) => {
     delete updPost.date;
     posts = posts.map(item => item.id === id ? validate(this.postSchema, {...item, ...updPost}) : item);
     posts = await updateTable(TABLE_NAMES.post, posts);
-    return posts.find(post => post.id === id);
+    return posts.find(post => post.id === +id);
 };
 
 exports.deletePostDB = async (id) => {
